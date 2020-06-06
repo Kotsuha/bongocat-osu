@@ -5,7 +5,7 @@ namespace data {
 Json::Value cfg;
 std::map<std::string, sf::Texture> img_holder;
 
-void create_config() {
+const char* create_config_str() {
     const char *s =
         R"V0G0N({
     "mode": 1,
@@ -48,7 +48,12 @@ void create_config() {
         "key4K": [68, 70, 74, 75],
         "key7K": [83, 68, 70, 32, 74, 75, 76]
     }
-})V0G0N";
+}
+)V0G0N";
+    return s;
+}
+
+void create_config(const char *s) {
     std::string error;
     Json::CharReaderBuilder cfg_builder;
     Json::CharReader *cfg_reader = cfg_builder.newCharReader();
@@ -90,9 +95,14 @@ bool update(Json::Value &cfg_default, Json::Value &cfg) {
 
 bool init() {
     while (true) {
-        create_config();
+        const char *s = create_config_str();
+        create_config(s);
         std::ifstream cfg_file("config.json", std::ifstream::binary);
         if (!cfg_file.good()) {
+            std::ofstream new_cfg_file;
+            new_cfg_file.open("config.json");
+            new_cfg_file.write(s, strlen(s));
+            new_cfg_file.close();
             break;
         }
         std::string cfg_string((std::istreambuf_iterator<char>(cfg_file)), std::istreambuf_iterator<char>()), error;
