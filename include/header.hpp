@@ -50,3 +50,9 @@ bool init();
 
 void draw();
 }; // namespace mania
+
+namespace iw {
+bool init();
+
+void draw();
+}; // namespace mania
