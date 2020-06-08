@@ -18,7 +18,7 @@ const char* create_config_str() {
     },
     "decoration": {
         "leftHanded": false,
-        "rgb": [255, 255, 255],
+        "rgb": [0, 0, 255],
         "offsetX": [0, 11],
         "offsetY": [0, -65],
         "scalar": [1.0, 1.0]
@@ -48,8 +48,10 @@ const char* create_config_str() {
         "key4K": [68, 70, 74, 75],
         "key7K": [83, 68, 70, 32, 74, 75, 76]
     },
-    "iw": {
-        "key7K": [83, 68, 70, 32, 74, 75, 76]
+    "kb": {
+         "left_hand_keys": [17, 16, 82, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+        "right_hand_keys": [40, 37, 39, 38, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+           "no_hand_keys": [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
     }
 }
 )V0G0N";
@@ -135,7 +137,7 @@ bool init() {
     case 4:
         return mania::init();
     case 5:
-        return iw::init();
+        return kb::init();
     default:
         error_msg("Mode value is not correct", "Error reading configs");
         return false;

@@ -68,7 +68,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
             mania::draw();
             break;
         case 5:
-            iw::draw();
+            kb::draw();
             break;
         }
 
