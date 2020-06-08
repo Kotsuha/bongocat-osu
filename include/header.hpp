@@ -51,7 +51,7 @@ bool init();
 void draw();
 }; // namespace mania
 
-namespace iw {
+namespace kb {
 bool init();
 
 void draw();
