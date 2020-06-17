@@ -10,6 +10,7 @@ int left_hand_key_value[NUM], right_hand_key_value[NUM], no_hand_key_value[NUM];
 int left_hand_pos = -1, right_hand_pos = -1;
 bool left_hand_key_is_down[NUM], right_hand_key_is_down[NUM];
 bool left_hand_key_was_down[NUM], right_hand_key_was_down[NUM];
+int curr_left_hand_key_down_order = 0, curr_right_hand_key_down_order = 0, left_hand_key_down_order[NUM] = {0}, right_hand_key_down_order[NUM] = {0};
 
 bool init()
 {
@@ -55,6 +56,34 @@ void draw_7K()
     {
         left_hand_key_is_down[i] = (left_hand_key_value[i] > 0 && GetKeyState(left_hand_key_value[i]) & WM_KEYDOWN);
         right_hand_key_is_down[i]= (right_hand_key_value[i] > 0 && GetKeyState(right_hand_key_value[i]) & WM_KEYDOWN);
+
+        if (!left_hand_key_was_down[i] && left_hand_key_is_down[i])
+        {
+            curr_left_hand_key_down_order++;
+            if (curr_left_hand_key_down_order == INT_MIN)
+            {
+                for (int j = 0; j < NUM; j++)
+                {
+                    left_hand_key_down_order[j] += NUM;
+                }
+                curr_left_hand_key_down_order += NUM;
+            }
+            left_hand_key_down_order[i] = curr_left_hand_key_down_order;
+        }
+        if (!right_hand_key_was_down[i] && right_hand_key_is_down[i])
+        {
+            curr_right_hand_key_down_order++;
+            if (curr_right_hand_key_down_order == INT_MIN)
+            {
+                for (int j = 0; j < NUM; j++)
+                {
+                    right_hand_key_down_order[j] += NUM;
+                }
+                curr_right_hand_key_down_order += NUM;
+            }
+            right_hand_key_down_order[i] = curr_right_hand_key_down_order;
+        }
+
         if (left_hand_key_is_down[i])
         {
             window.draw(left_hand_key[i]);
@@ -70,44 +99,23 @@ void draw_7K()
     }
 
     // Determine hand positions
+    int tmp_most_recent_order = INT_MIN;
+    left_hand_pos = -1;
     for (int i = 0; i < NUM; i++)
     {
-        if (!left_hand_key_was_down[i] && left_hand_key_is_down[i])
+        if (left_hand_key_is_down[i] && left_hand_key_down_order[i] >= tmp_most_recent_order)
         {
+            tmp_most_recent_order = left_hand_key_down_order[i];
             left_hand_pos = i;
-            break;
         }
     }
-    if (!left_hand_key_is_down[left_hand_pos])
-    {
-        left_hand_pos = -1;
-        for (int i = 0; i < NUM; i++)
-        {
-            if (left_hand_key_is_down[i])
-            {
-                left_hand_pos = i;
-                break;
-            }
-        }
-    }
+    right_hand_pos = -1;
     for (int i = 0; i < NUM; i++)
     {
-        if (!right_hand_key_was_down[i] && right_hand_key_is_down[i])
+        if (right_hand_key_is_down[i] && right_hand_key_down_order[i] >= tmp_most_recent_order)
         {
+            tmp_most_recent_order = right_hand_key_down_order[i];
             right_hand_pos = i;
-            break;
-        }
-    }
-    if (!right_hand_key_is_down[right_hand_pos])
-    {
-        right_hand_pos = -1;
-        for (int i = 0; i < NUM; i++)
-        {
-            if (right_hand_key_is_down[i])
-            {
-                right_hand_pos = i;
-                break;
-            }
         }
     }
 
