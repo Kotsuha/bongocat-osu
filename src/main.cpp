@@ -4,7 +4,14 @@ sf::RenderWindow window;
 
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
 
-    window.create(sf::VideoMode(612, 352), "Bongo Cat for osu!", sf::Style::Titlebar | sf::Style::Close);
+    // loading configs
+    while (!data::init()) {
+        continue;
+    }
+
+    int window_width = data::cfg["window"]["width"].asInt();
+    int window_height = data::cfg["window"]["height"].asInt();
+    window.create(sf::VideoMode(window_width, window_height), "Bongo Cat for osu!", sf::Style::Titlebar | sf::Style::Close);
 
     // get refresh rate and set the frame limit
     DISPLAY_DEVICE device;
@@ -16,11 +23,6 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     devmode.dmSize = sizeof(DEVMODE);
     EnumDisplaySettings((LPSTR)device.DeviceName, ENUM_REGISTRY_SETTINGS, &devmode);
     window.setFramerateLimit(devmode.dmDisplayFrequency);
-
-    // loading configs
-    while (!data::init()) {
-        continue;
-    }
 
     bool is_reload = false;
 
