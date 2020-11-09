@@ -9,6 +9,10 @@ const char* create_config_str() {
     const char *s =
         R"V0G0N({
     "mode": 1,
+    "window": {
+        "width": 612,
+        "height": 352
+    },
     "resolution": {
         "letterboxing": false,
         "width": 1920,
@@ -51,7 +55,8 @@ const char* create_config_str() {
     "kb": {
          "left_hand_keys": [17, 16, 82, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
         "right_hand_keys": [40, 37, 39, 38, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
-           "no_hand_keys": [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
+           "no_hand_keys": [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+   "face_decoration_keys": [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
     }
 }
 )V0G0N";
