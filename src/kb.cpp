@@ -8,11 +8,13 @@ const int NUM = 16;
 sf::Sprite bg, left_hand_up, right_hand_up;
 sf::Sprite left_hand[NUM], right_hand[NUM];
 sf::Sprite left_hand_key[NUM], right_hand_key[NUM], no_hand_key[NUM];
-int left_hand_key_value[NUM], right_hand_key_value[NUM], no_hand_key_value[NUM];
+sf::Sprite face_decoration[NUM];
+int left_hand_key_value[NUM], right_hand_key_value[NUM], no_hand_key_value[NUM], face_decoration_key_value[NUM];
 int left_hand_pos = -1, right_hand_pos = -1;
 bool left_hand_key_is_down[NUM], right_hand_key_is_down[NUM];
 bool left_hand_key_was_down[NUM], right_hand_key_was_down[NUM];
 std::vector<int> left_hand_key_down_order, right_hand_key_down_order;
+int face_decoration_index = -1;
 
 std::ofstream log_file;
 bool is_debug = false;
@@ -24,6 +26,7 @@ bool init()
         left_hand_key_value[i] = data::cfg["kb"]["left_hand_keys"][i].asInt();
         right_hand_key_value[i] = data::cfg["kb"]["right_hand_keys"][i].asInt();
         no_hand_key_value[i] = data::cfg["kb"]["no_hand_keys"][i].asInt();
+        face_decoration_key_value[i] = data::cfg["kb"]["face_decoration_keys"][i].asInt();
     }
 
     // importing sprites
@@ -45,6 +48,10 @@ bool init()
         if (no_hand_key_value[i] >= 0)
         {
             no_hand_key[i].setTexture(data::load_texture("img/kb/no_hand_key_" + std::to_string(i) + ".png"));
+        }
+        if (face_decoration_key_value[i] >= 0)
+        {
+            face_decoration[i].setTexture(data::load_texture("img/kb/face_decoration_" + std::to_string(i) + ".png"));
         }
     }
 
@@ -108,13 +115,30 @@ void draw_7K()
         }
     }
 
+    // Determine face decoration index (Currently not good)
+    for (int i = 0; i < NUM; i++)
+    {
+        if (face_decoration_key_value[i] > 0)
+        {
+            if (GetKeyState(face_decoration_key_value[i]) & WM_KEYDOWN)
+            {
+                face_decoration_index = i;
+                break;
+            }
+        }
+    }
+
     // Determine hand positions
     left_hand_pos = left_hand_key_down_order.empty() ? -1 : *left_hand_key_down_order.begin();
     right_hand_pos = right_hand_key_down_order.empty() ? -1 : *right_hand_key_down_order.begin();
 
-    // Draw hands
-    window.draw(left_hand_pos == -1 ? left_hand_up : left_hand[left_hand_pos]);
+    // Draw hands & face decoration
     window.draw(right_hand_pos == -1 ? right_hand_up : right_hand[right_hand_pos]);
+    if (face_decoration_index >= 0)
+    {
+        window.draw(face_decoration[face_decoration_index]);
+    }
+    window.draw(left_hand_pos == -1 ? left_hand_up : left_hand[left_hand_pos]);
 
     // Update key down
     for (int i = 0; i < NUM; i++)
