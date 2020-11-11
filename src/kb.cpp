@@ -1,5 +1,4 @@
 #include "header.hpp"
-#include <fstream>
 #include <vector>
 
 namespace kb
@@ -55,21 +54,7 @@ bool init()
         }
     }
 
-    if (is_debug)
-    {
-        log_file.open("debug.log");
-    }
-
     return true;
-}
-
-void print_log(const std::string& text)
-{
-    if (!is_debug)
-    {
-        return;
-    }
-    log_file << text << std::endl;
 }
 
 void draw_7K()
@@ -82,6 +67,25 @@ void draw_7K()
     {
         left_hand_key_is_down[i] = (left_hand_key_value[i] > 0 && GetKeyState(left_hand_key_value[i]) & WM_KEYDOWN);
         right_hand_key_is_down[i] = (right_hand_key_value[i] > 0 && GetKeyState(right_hand_key_value[i]) & WM_KEYDOWN);
+
+        // <!-- SON Fix
+        if (left_hand_key_value[i] == VK_SHIFT)
+        {
+            left_hand_key_is_down[i] = son::shift_key_is_down;
+        }
+        else if (left_hand_key_value[i] == VK_NUMPAD0)
+        {
+            left_hand_key_is_down[i] = son::numpad0_key_is_down;
+        }
+        if (right_hand_key_value[i] == VK_SHIFT)
+        {
+            right_hand_key_is_down[i] = son::shift_key_is_down;
+        }
+        else if (right_hand_key_value[i] == VK_NUMPAD0)
+        {
+            right_hand_key_is_down[i] = son::numpad0_key_is_down;
+        }
+        // SON Fix -->
 
         if (!left_hand_key_was_down[i] && left_hand_key_is_down[i])
         {
@@ -109,7 +113,9 @@ void draw_7K()
         {
             window.draw(right_hand_key[i]); 
         }
-        if (no_hand_key_value[i] > 0 && GetKeyState(no_hand_key_value[i]) & WM_KEYDOWN)
+        if ((no_hand_key_value[i] > 0 && GetKeyState(no_hand_key_value[i]) & WM_KEYDOWN) 
+            || (no_hand_key_value[i] == VK_SHIFT && son::shift_key_is_down)
+            || (no_hand_key_value[i] == VK_NUMPAD0 && son::numpad0_key_is_down))
         {
             window.draw(no_hand_key[i]); 
         }

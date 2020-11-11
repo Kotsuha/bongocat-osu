@@ -17,6 +17,20 @@
 
 extern sf::RenderWindow window;
 
+namespace logger {
+void init();
+
+void print_log(const std::string& text);
+}; // namespace logger
+
+namespace son {
+extern bool shift_key_is_down;
+extern bool numpad0_key_is_down;
+void on_sf_event_key_pressed(int frame_count, sf::Event event);
+void on_sf_event_key_released(int frame_count, sf::Event event);
+void update(int frame_count);
+}; // namespace son
+
 namespace data {
 extern Json::Value cfg;
 

@@ -4,6 +4,9 @@ sf::RenderWindow window;
 
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
 
+    // open log file if needed
+    logger::init();
+
     // loading configs
     while (!data::init()) {
         continue;
@@ -26,7 +29,10 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
     bool is_reload = false;
 
+    int frame_count = -1; // Unity also uses int
+
     while (window.isOpen()) {
+        frame_count++;
         sf::Event event;
         while (window.pollEvent(event)) {
             switch (event.type) {
@@ -45,10 +51,20 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
                     is_reload = true;
                     break;
                 }
+                son::on_sf_event_key_pressed(frame_count, event);
+                break;
+
+            case sf::Event::KeyReleased:
+                son::on_sf_event_key_released(frame_count, event);
+                break;
+
             default:
                 is_reload = false;
             }
         }
+
+        son::update(frame_count);
+
 
         int mode = data::cfg["mode"].asInt();
         int red_value = data::cfg["decoration"]["rgb"][0].asInt();
@@ -73,6 +89,13 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
             kb::draw();
             break;
         }
+
+        // bool insert_is_down = sf::Keyboard::isKeyPressed(sf::Keyboard::Insert);
+        // logger::print_log("Insert is down: " + std::to_string(insert_is_down));
+        // bool insert_is_down = GetKeyState(VK_INSERT) & WM_KEYDOWN;
+        // logger::print_log("Insert is down: " + std::to_string(insert_is_down));
+        // bool insert_is_down = GetAsyncKeyState(VK_INSERT) & 0x8000;
+        // logger::print_log("Insert is down: " + std::to_string(insert_is_down));
 
         window.display();
     }
