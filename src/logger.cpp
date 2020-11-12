@@ -2,7 +2,7 @@
 
 namespace logger {
     std::ofstream log_file;
-    bool is_debug = false;
+    bool is_debug = true;
     void init()
     {
         if (is_debug)

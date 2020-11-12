@@ -16,19 +16,28 @@
 #include "json/json.h"
 
 extern sf::RenderWindow window;
+int get_frame_count();
 
 namespace logger {
 void init();
-
 void print_log(const std::string& text);
 }; // namespace logger
+
+namespace hook {
+BOOL HookKeyboard();
+BOOL UnhookKeyboard();
+typedef void (*Callback)(WPARAM message, PKBDLLHOOKSTRUCT eventInfo);
+void SetCallback(Callback function);
+} // namespace hook
 
 namespace son {
 extern bool shift_key_is_down;
 extern bool numpad0_key_is_down;
-void on_sf_event_key_pressed(int frame_count, sf::Event event);
-void on_sf_event_key_released(int frame_count, sf::Event event);
-void update(int frame_count);
+bool start_hook();
+bool stop_hook();
+// void on_sf_event_key_pressed(int frame_count, sf::Event event);
+// void on_sf_event_key_released(int frame_count, sf::Event event);
+// void update(int frame_count);
 }; // namespace son
 
 namespace data {

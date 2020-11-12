@@ -1,6 +1,7 @@
 #include "header.hpp"
 
 sf::RenderWindow window;
+int frame_count = -1; // Unity also uses int
 
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
 
@@ -10,6 +11,13 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     // loading configs
     while (!data::init()) {
         continue;
+    }
+
+    logger::print_log("start_hook()");
+    bool hook_succeeded = son::start_hook();
+    if (!hook_succeeded)
+    {
+        logger::print_log("-> failed");
     }
 
     int window_width = data::cfg["window"]["width"].asInt();
@@ -28,8 +36,6 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     window.setFramerateLimit(devmode.dmDisplayFrequency);
 
     bool is_reload = false;
-
-    int frame_count = -1; // Unity also uses int
 
     while (window.isOpen()) {
         frame_count++;
@@ -51,11 +57,11 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
                     is_reload = true;
                     break;
                 }
-                son::on_sf_event_key_pressed(frame_count, event);
+                // son::on_sf_event_key_pressed(frame_count, event);
                 break;
 
             case sf::Event::KeyReleased:
-                son::on_sf_event_key_released(frame_count, event);
+                // son::on_sf_event_key_released(frame_count, event);
                 break;
 
             default:
@@ -63,7 +69,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
             }
         }
 
-        son::update(frame_count);
+        // son::update(frame_count);
 
 
         int mode = data::cfg["mode"].asInt();
@@ -100,5 +106,17 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
         window.display();
     }
 
+    logger::print_log("stop_hook()");
+    bool stop_hook_succeeded = son::stop_hook();
+    if (!stop_hook_succeeded)
+    {
+        logger::print_log("-> failed");
+    }
+
     return 0;
+}
+
+int get_frame_count()
+{
+    return frame_count;
 }
