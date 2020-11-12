@@ -1,3 +1,4 @@
+#include "header.hpp"
 #include <fstream>
 
 namespace logger {
@@ -16,6 +17,6 @@ namespace logger {
         {
             return;
         }
-        log_file << text << std::endl;
+        log_file << "[" + std::to_string(get_frame_count()) + "] " << text << std::endl;
     }
 }

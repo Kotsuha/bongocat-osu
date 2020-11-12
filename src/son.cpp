@@ -52,9 +52,10 @@ namespace son
 		bool flag = false;
 		switch (event_info->vkCode)
 		{
-			case VK_SHIFT:
-			case VK_LSHIFT: // ?
-			case VK_RSHIFT: // ?
+			case VK_SHIFT: // 16
+			case VK_LSHIFT: // 160
+			case VK_RSHIFT: // 161
+				logger::print_log("WM_KEYDOWN VK_LSHIFT");
 				flag = true;
 				shift_keydown_time = event_info->time;
 				shift_key_is_down = true;
@@ -65,22 +66,40 @@ namespace son
 				break;
 
 			case VK_NUMPAD0:
+				logger::print_log("WM_KEYDOWN VK_NUMPAD0");
 				flag = true;
 				numpad0_key_is_down = true;
 				break;
 
 			case VK_INSERT:
+				logger::print_log("WM_KEYDOWN VK_INSERT");
 				flag = true;
-				if (event_info->time == shift_keyup_time) // Caused by SON
+				if (event_info->time == shift_keyup_time) // Shift+Numpad0
 				{
-					shift_key_is_down = true;
 					numpad0_key_is_down = true;
 				}
 				break;
 		}
 		if (flag)
 		{
-			logger::print_log("[" + std::to_string(get_frame_count()) + "] WM_KEYDOWN: " + std::to_string(event_info->vkCode));
+			logger::print_log("-> key_code: " + std::to_string(event_info->vkCode));
+			logger::print_log("-> scan_code: " + std::to_string(event_info->scanCode));
+			logger::print_log("-> is_extended: " + std::to_string((event_info->flags & LLKHF_EXTENDED)));
+			logger::print_log("-> is_injected: " + std::to_string((event_info->flags & LLKHF_INJECTED)));
+			logger::print_log("-> is_alt_down: " + std::to_string((event_info->flags & LLKHF_ALTDOWN)));
+			logger::print_log("-> is_up: " + std::to_string((event_info->flags & LLKHF_UP)));
+			logger::print_log("-> extra_info: " + std::to_string(GetMessageExtraInfo()));
+
+			WCHAR wch_key_name[16];
+			char ch_key_name[16];
+			LONG lParam = (event_info->scanCode << 16);
+			int result = GetKeyNameTextW(lParam, wch_key_name, 16);
+			if (result > 0)
+			{
+				char defult_char = ' ';
+				WideCharToMultiByte(CP_ACP, 0, wch_key_name, -1, ch_key_name, 16, &defult_char, NULL);
+			}
+			logger::print_log(std::string("-> key_name: ") + ch_key_name);
 		}
 	}
 
@@ -92,29 +111,51 @@ namespace son
 			case VK_SHIFT:
 			case VK_LSHIFT: // ?
 			case VK_RSHIFT: // ?
+				logger::print_log("WM_KEYUP   VK_LSHIFT");
 				flag = true;
 				shift_keyup_time = event_info->time;
-				shift_key_is_down = false;
+				if (event_info->scanCode != 554)
+				{
+					shift_key_is_down = false;
+				}
 				break;
 
 			case VK_NUMPAD0:
+				logger::print_log("WM_KEYUP   VK_NUMPAD0");
 				flag = true;
 				numpad0_key_is_down = false;
 				break;
 
 			case VK_INSERT:
+				logger::print_log("WM_KEYUP   VK_INSERT");
 				flag = true;
 				insert_keyup_time = event_info->time;
 				if (event_info->time == shift_keyup_time)
 				{
-					shift_key_is_down = true;
 					numpad0_key_is_down = false;
 				}
 				break;
 		}
 		if (flag)
 		{
-			logger::print_log("[" + std::to_string(get_frame_count()) + "] WM_KEYUP: " + std::to_string(event_info->vkCode));
+			logger::print_log("-> key_code: " + std::to_string(event_info->vkCode));
+			logger::print_log("-> scan_code: " + std::to_string(event_info->scanCode));
+			logger::print_log("-> is_extended: " + std::to_string((event_info->flags & LLKHF_EXTENDED)));
+			logger::print_log("-> is_injected: " + std::to_string((event_info->flags & LLKHF_INJECTED)));
+			logger::print_log("-> is_alt_down: " + std::to_string((event_info->flags & LLKHF_ALTDOWN)));
+			logger::print_log("-> is_up: " + std::to_string((event_info->flags & LLKHF_UP)));
+			logger::print_log("-> extra_info: " + std::to_string(GetMessageExtraInfo()));
+
+			WCHAR wch_key_name[16];
+			char ch_key_name[16];
+			LONG lParam = (event_info->scanCode << 16);
+			int result = GetKeyNameTextW(lParam, wch_key_name, 16);
+			if (result > 0)
+			{
+				char defult_char = ' ';
+				WideCharToMultiByte(CP_ACP, 0, wch_key_name, -1, ch_key_name, 16, &defult_char, NULL);
+			}
+			logger::print_log(std::string("-> key_name: ") + ch_key_name);
 		}
 	}
 
